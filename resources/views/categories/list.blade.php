@@ -9,6 +9,13 @@
         </div>
         <a href="{{ route("category.create") }}" class="btn btn-primary">Créer une catégorie</a>
 
+        @if ($message = Session::get('success'))
+        <div class="alert alert-success" role="alert">
+          {{ $message }}
+          </div>
+            
+        @endif
+
         <div class="row mt-5">
             <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12">
 
@@ -16,8 +23,9 @@
                 
                     <div class="alert alert-success">
                         <p>{{ $category->name }}</p>
-                        <a href="" class="btn btn-primary">Modifier</a>
-                        <a href="" class="btn btn-danger">Supprimer</a>
+                        <a href="{{ route('category.edit', $category->id) }}" class="btn btn-primary" onclick="return confirm('Êtes vous sùre de vouloir modifier cette categorie?')" >Modifier</a>
+
+                        <a href="{{ route('category.destroy', $category->id) }}" class="btn btn-danger" onclick="return confirm('Êtes vous sùre de vouloir supprimer cette categorie?')" >Supprimer</a>
                     </div>
                 @endforeach
             </div>

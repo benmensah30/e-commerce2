@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('content')
-    <form action="{{ route('category.store') }}" method="GET" class="mt-5">
+    <form action="{{ route('category.store') }}" method="POST" class="mt-5">
         @csrf
         <div class="container-fluid row">
             <div class="col-xl-4"></div>

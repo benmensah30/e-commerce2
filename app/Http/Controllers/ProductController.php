@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Category;
+use App\Models\Product;
+use Illuminate\Support\Facades\URL;
 
 class ProductController extends Controller
 {
@@ -11,7 +14,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view("products.list");
+        $products = Product::all(); 
+        return view("products.list", ["products"=>$products]);
     }
 
     /**
@@ -19,7 +23,10 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view("products.create");
+        $categories = Category::all();
+        return view("products.create", [
+            "categories"=> $categories
+        ]);
     }
 
     /**
@@ -27,7 +34,20 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        return back()-with('error', 'Un produit du même nom existe déjà.');
+        $product = new Product();
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->price = $request->price;
+        $product->category_id = $request->category_id;
+        if ($request->hasFile("file")) {
+            move_uploaded_file($_FILES['file']['tmp_name'], 'db/products/' . $_FILES['file']['name']);
+            $product->file = $_FILES['file']['name'];
+        } else {
+            $product->file = '';
+        }
+        $product->save();
+
+        return back()->with('success', 'Produit ajouté avec succès');
     }
 
     /**
@@ -43,15 +63,35 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $product = Product::find($id);
+        $categories = Category::all();
+        return view("products.edit", [
+            "product"=> $product,
+            "categories"=> $categories
+        
+        ]);
+
     }
 
     /**
      * Update the specified resource in storage.
      */
+    
     public function update(Request $request, string $id)
     {
-        //
+        $product = Product::find($id);
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->price = $request->price;
+        $product->category_id = $request->category_id;
+        if ($request->hasFile("file")) {
+            move_uploaded_file($_FILES['file']['tmp_name'], 'db/products/' . $_FILES['file']['name']);
+            $product->file = $_FILES['file']['name'];
+        } else {
+            $product->file = '';
+        }
+        $product->save();
+        return redirect()->route("product.list")->with("success", "Produit modifiée avec succès");
     }
 
     /**
@@ -59,6 +99,8 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $product = Product::find($id);
+        $product->delete();
+        return back()->with("success","Produit supprimée!!!");
     }
 }

@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-xl-4"></div>
         <div class="col-xl-4">
-            <h1>Créer un produit </h1>
+            <h1>Modifier un produit </h1>
             @if ($message = Session::get('error'))
 
             <div class="alert alert-danger" role="alert">
@@ -12,6 +12,7 @@
             </div>
                 
             @endif
+            
             @if ($message = Session::get('success'))
 
             <div class="alert alert-success" role="alert">
@@ -19,22 +20,24 @@
             </div>
                 
             @endif
-            <form action="{{ route('product.store') }}" method="post" enctype="multipart/form-data">
+            <img src="{{ URL::asset($product->file == '' ? 'db/OIP.jfif' : URL::asset('db/products/' . $product->file)) }}" class="card-img-top"
+            alt="{{ $product->name }}" width="100%">
+            <form action="{{ route('product.update', $product->id) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <select name="category_id" required class="form-select">
                     <option value="" selected>Choisir une catégorie</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option value="{{ $category->id }}" {{ $product->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                     @endforeach
                 </select>
                 <label for="name">Nom du produit</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Saisir le nom du produit ici">
+                <input type="text" class="form-control" value="{{ $product->name }}" id="name" name="name" placeholder="Saisir le nom du produit ici">
 
                 <label for="price">Prix du produit</label>
-                <input type="number" class="form-control" name="price" id="price" min="100" max="1000000" value="0">
+                <input type="number" class="form-control" value="{{ $product->price}}" name="price" id="price" min="100" max="1000000" value="0">
 
                 <label for="description">Description du produit</label>
-                <textarea name="description" id="description" placeholder="Saisir la description ici" class="form-control" rows="4" class="form-control"></textarea><br/>
+                <textarea name="description" id="description"  placeholder="Saisir la description ici" class="form-control" rows="4" class="form-control">{{ $product->description}}"</textarea><br/>
 
                 <label for="file">Image de couverture</label>
                 <div>
@@ -44,7 +47,7 @@
 
 
 
-                <button type="submit" class="btn btn-primary">Publier</button>
+                <button type="submit" class="btn btn-primary">mettre a jour</button>
             </form>
 
         </div>
